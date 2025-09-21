@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - ResaleX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6">
+            <!-- Product Images -->
+            <div class="product-gallery">
+                <div class="main-image mb-3">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" class="img-fluid rounded shadow" alt="{{ product.name }}" id="mainImage">
+                    {% else %}
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Image thumbnails (if multiple images) -->
+                <div class="thumbnail-gallery d-flex gap-2">
+                    {% if product.image_url %}
+                    <div class="thumbnail active">
+                        <img src="{{ product.image_url }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;" onclick="changeMainImage(this.src)">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <!-- Product Info -->
+            <div class="product-info">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="fw-bold mb-2">{{ product.name }}</h1>
+                        <p class="text-muted h5 mb-0">{{ product.brand }}</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="h3 text-primary fw-bold mb-1">{{ "%.0f"|format(product.price) }} ₽</div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-{{ 'success' if product.condition == 'new' else 'primary' if product.condition == 'like_new' else 'warning' if product.condition == 'good' else 'secondary' }}">
+                                {{ product.condition.replace('_', ' ').title() }}
+                            </span>
+                            <span class="badge bg-info">{{ product.category.title() }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if product.size %}
+                <div class="mb-3">
+                    <h6 class="fw-semibold mb-2">Размер:</h6>
+                    <span class="badge bg-light text-dark border fs-6">{{ product.size }}</span>
+                </div>
+                {% endif %}
+                
+                {% if product.description %}
+                <div class="mb-4">
+                    <h6 class="fw-semibold mb-2">Описание:</h6>
+                    <p class="text-muted">{{ product.description }}</p>
+                </div>
+                {% endif %}
+                
+                <!-- Seller Info -->
+                <div class="seller-info mb-4 p-3 bg-light rounded">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-user-circle fa-2x text-muted me-3"></i>
+                        <div>
+                            <h6 class="fw-semibold mb-1">Продавец</h6>
+                            <p class="text-muted mb-0">{{ product.seller.username }}</p>
+                        </div>
+                        <div class="ms-auto">
+                            <span class="badge bg-success">Проверен</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.id != product.seller_id %}
+                            {% if product.status == 'approved' %}
+                            <form method="POST" action="{{ url_for('buy_product', product_id=product.id) }}" class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-shopping-cart me-2"></i>Купить сейчас
+                                </button>
+                            </form>
+                            {% else %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-clock me-2"></i>Товар находится на модерации
+                            </div>
+                            {% endif %}
+                        {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>Это ваш товар
+                        </div>
+                        {% endif %}
+                    {% else %}
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Войти для покупки
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Additional Actions -->
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-outline-primary flex-fill" data-action="wishlist">
+                            <i class="far fa-heart me-2"></i>В избранное
+                        </button>
+                        <button class="btn btn-outline-secondary flex-fill" data-action="share">
+                            <i class="fas fa-share me-2"></i>Поделиться
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Product Details -->
+                <div class="product-details mt-5">
+                    <h6 class="fw-semibold mb-3">Детали товара</h6>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="detail-item">
+                                <small class="text-muted">Категория</small>
+                                <div class="fw-semibold">{{ product.category.title() }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="detail-item">
+                                <small class="text-muted">Состояние</small>
+                                <div class="fw-semibold">{{ product.condition.replace('_', ' ').title() }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="detail-item">
+                                <small class="text-muted">Дата добавления</small>
+                                <div class="fw-semibold">{{ product.created_at.strftime('%d.%m.%Y') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="detail-item">
+                                <small class="text-muted">ID товара</small>
+                                <div class="fw-semibold">#{{ product.id }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Related Products -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4 class="fw-bold mb-4">Похожие товары</h4>
+            <div class="row g-4">
+                <!-- This would be populated with related products -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                            <h6 class="card-title">Больше товаров скоро</h6>
+                            <p class="text-muted small">Мы работаем над добавлением похожих товаров</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function changeMainImage(src) {
+    document.getElementById('mainImage').src = src;
+    
+    // Update active thumbnail
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    event.target.closest('.thumbnail').classList.add('active');
+}
+
+// Share functionality
+document.querySelector('[data-action="share"]').addEventListener('click', function() {
+    if (navigator.share) {
+        navigator.share({
+            title: '{{ product.name }}',
+            text: 'Посмотрите этот товар на ResaleX',
+            url: window.location.href
+        });
+    } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            ResaleX.showNotification('Ссылка скопирована в буфер обмена', 'success');
+        });
+    }
+});
+
+// Wishlist functionality
+document.querySelector('[data-action="wishlist"]').addEventListener('click', function() {
+    const icon = this.querySelector('i');
+    if (icon.classList.contains('far')) {
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+        this.classList.add('text-danger');
+        ResaleX.showNotification('Добавлено в избранное!', 'success');
+    } else {
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+        this.classList.remove('text-danger');
+        ResaleX.showNotification('Удалено из избранного', 'info');
+    }
+});
+</script>
+{% endblock %}

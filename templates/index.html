@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}ResaleX - Premium Marketplace{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5" style="background: var(--gradient-primary); position: relative; overflow: hidden;">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4 text-white">
+                    Добро пожаловать в <span class="text-warning">ResaleX</span>
+                </h1>
+                <p class="lead mb-4 text-white">
+                    Премиальная платформа для перепродажи эксклюзивных товаров. 
+                    Аутентичность гарантирована, качество проверено.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ url_for('products') }}" class="btn btn-warning btn-lg px-4">
+                        <i class="fas fa-shopping-bag me-2"></i>Начать покупки
+                    </a>
+                    {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Войти
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image text-center position-relative">
+                    <div class="hero-gem" style="font-size: 8rem; color: var(--accent-primary); animation: float 3s ease-in-out infinite;">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <div class="hero-particles position-absolute top-0 start-0 w-100 h-100">
+                        <div class="particle" style="position: absolute; width: 4px; height: 4px; background: var(--accent-primary); border-radius: 50%; animation: particle1 4s linear infinite;"></div>
+                        <div class="particle" style="position: absolute; width: 6px; height: 6px; background: var(--accent-warning); border-radius: 50%; animation: particle2 3s linear infinite;"></div>
+                        <div class="particle" style="position: absolute; width: 3px; height: 3px; background: var(--accent-success); border-radius: 50%; animation: particle3 5s linear infinite;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes particle1 {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translate(100px, -100px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes particle2 {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: translate(-80px, -120px) rotate(-360deg); opacity: 0; }
+}
+
+@keyframes particle3 {
+    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translate(120px, -80px) rotate(180deg); opacity: 0; }
+}
+
+.hero-particles .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+.hero-particles .particle:nth-child(2) { top: 60%; left: 20%; animation-delay: 1s; }
+.hero-particles .particle:nth-child(3) { top: 40%; left: 80%; animation-delay: 2s; }
+</style>
+
+<!-- Features Section -->
+<section class="py-5" style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop);">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3 text-primary">Почему выбирают ResaleX?</h2>
+                <p class="text-secondary">Мы обеспечиваем безопасность, аутентичность и премиальное качество</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100" style="background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--border-radius-lg); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3 text-primary">Аутентичность</h5>
+                    <p class="text-secondary">Все товары проходят проверку на подлинность нашими экспертами</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shipping-fast fa-3x text-success"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Быстрая доставка</h5>
+                    <p class="text-muted">Надежная доставка по всему миру с отслеживанием в реальном времени</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-headset fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">24/7 Поддержка</h5>
+                    <p class="text-muted">Круглосуточная поддержка клиентов для решения любых вопросов</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Популярные товары</h2>
+                <p class="text-muted">Откройте для себя самые востребованные товары на нашей платформе</p>
+            </div>
+        </div>
+        
+        {% if products %}
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6">
+                <div class="product-card card h-100 border-0 shadow-sm">
+                    <div class="product-image position-relative">
+                        {% if product.image_url %}
+                        <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="height: 250px; object-fit: cover;">
+                        {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <div class="product-badge position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-{{ 'success' if product.condition == 'new' else 'primary' }}">
+                                {{ product.condition.title() }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title fw-bold mb-2">{{ product.name }}</h6>
+                        <p class="text-muted small mb-2">{{ product.brand }}</p>
+                        {% if product.size %}
+                        <p class="text-muted small mb-3">Размер: {{ product.size }}</p>
+                        {% endif %}
+                        <div class="mt-auto">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="h5 text-primary fw-bold mb-0">{{ "%.0f"|format(product.price) }} ₽</span>
+                                <span class="badge bg-secondary">{{ product.category.title() }}</span>
+                            </div>
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-eye me-2"></i>Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-th-large me-2"></i>Смотреть все товары
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">Товары скоро появятся</h5>
+            <p class="text-muted">Мы работаем над добавлением новых товаров</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5" style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item card h-100" style="background: var(--gradient-glass); border: 1px solid var(--glass-border);">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h3 class="display-4 fw-bold text-primary">1000+</h3>
+                        <p class="text-muted mb-0">Товаров</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item card h-100" style="background: var(--gradient-glass); border: 1px solid var(--glass-border);">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h3 class="display-4 fw-bold text-success">500+</h3>
+                        <p class="text-muted mb-0">Продавцов</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item card h-100" style="background: var(--gradient-glass); border: 1px solid var(--glass-border);">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h3 class="display-4 fw-bold text-warning">10K+</h3>
+                        <p class="text-muted mb-0">Покупателей</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="stat-item card h-100" style="background: var(--gradient-glass); border: 1px solid var(--glass-border);">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h3 class="display-4 fw-bold text-info">99%</h3>
+                        <p class="text-muted mb-0">Довольных клиентов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

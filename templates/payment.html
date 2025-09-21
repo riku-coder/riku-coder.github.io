@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Оплата - ResaleX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-credit-card me-2"></i>Оплата заказа #{{ order.id }}
+                    </h4>
+                </div>
+                <div class="card-body p-5">
+                    <!-- Order Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3">Детали заказа</h6>
+                            <div class="order-item d-flex align-items-center">
+                                {% if order.product.image_url %}
+                                <img src="{{ order.product.image_url }}" class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light rounded me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="fw-semibold">{{ order.product.name }}</div>
+                                    <small class="text-muted">{{ order.product.brand }}</small>
+                                    {% if order.product.size %}
+                                    <br><small class="text-muted">Размер: {{ order.product.size }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-semibold mb-3">Стоимость</h6>
+                            <div class="price-breakdown">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Цена товара:</span>
+                                    <span>{{ "%.0f"|format(order.product.price) }} ₽</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Комиссия платформы:</span>
+                                    <span>0 ₽</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Доставка:</span>
+                                    <span>Бесплатно</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between h5 fw-bold text-success">
+                                    <span>Итого:</span>
+                                    <span>{{ "%.0f"|format(order.total_amount) }} ₽</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Form -->
+                    <form id="payment-form" data-client-secret="{{ client_secret }}">
+                        <div class="mb-4">
+                            <h6 class="fw-semibold mb-3">Способ оплаты</h6>
+                            <div class="payment-methods">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="card" value="card" checked>
+                                    <label class="form-check-label" for="card">
+                                        <i class="fab fa-cc-visa fa-lg me-2"></i>
+                                        <i class="fab fa-cc-mastercard fa-lg me-2"></i>
+                                        <i class="fab fa-cc-amex fa-lg me-2"></i>
+                                        Банковская карта
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="paypal" value="paypal" disabled>
+                                    <label class="form-check-label text-muted" for="paypal">
+                                        <i class="fab fa-paypal fa-lg me-2"></i>
+                                        PayPal (скоро)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Element -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Данные карты</label>
+                            <div id="card-element" class="form-control p-3">
+                                <!-- Stripe Elements will create form elements here -->
+                            </div>
+                            <div id="card-errors" class="text-danger small mt-2"></div>
+                        </div>
+                        
+                        <!-- Billing Address -->
+                        <div class="mb-4">
+                            <h6 class="fw-semibold mb-3">Адрес для выставления счета</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Имя" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" placeholder="Фамилия" required>
+                                </div>
+                                <div class="col-12">
+                                    <input type="email" class="form-control" placeholder="Email" required>
+                                </div>
+                                <div class="col-12">
+                                    <input type="text" class="form-control" placeholder="Адрес" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Город" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Штат/Область" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" placeholder="Почтовый индекс" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Terms and Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    Я согласен с <a href="#" class="text-primary">условиями использования</a> и <a href="#" class="text-primary">политикой конфиденциальности</a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg" id="submit-button">
+                                <i class="fas fa-lock me-2"></i>Оплатить {{ "%.0f"|format(order.total_amount) }} ₽
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Security Info -->
+                    <div class="mt-4 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Ваши данные защищены 256-битным SSL-шифрованием
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Protection -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body">
+                    <h6 class="fw-semibold mb-3">
+                        <i class="fas fa-shield-alt text-success me-2"></i>Защита покупателя
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <small>Аутентичность гарантирована</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-undo text-success me-2"></i>
+                                <small>Возврат в течение 14 дней</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-headset text-success me-2"></i>
+                                <small>24/7 поддержка</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Stripe Elements
+const stripe = Stripe('pk_test_your_stripe_key'); // Replace with actual key
+const elements = stripe.elements();
+
+const cardElement = elements.create('card', {
+    style: {
+        base: {
+            fontSize: '16px',
+            color: '#424770',
+            '::placeholder': {
+                color: '#aab7c4',
+            },
+        },
+    },
+});
+
+cardElement.mount('#card-element');
+
+// Handle real-time validation errors from the card Element
+cardElement.on('change', function(event) {
+    const displayError = document.getElementById('card-errors');
+    if (event.error) {
+        displayError.textContent = event.error.message;
+    } else {
+        displayError.textContent = '';
+    }
+});
+
+// Handle form submission
+const form = document.getElementById('payment-form');
+form.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const submitButton = document.getElementById('submit-button');
+    const originalText = submitButton.innerHTML;
+    
+    // Disable submit button
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Обработка...';
+    
+    try {
+        const {error, paymentIntent} = await stripe.confirmCardPayment(
+            form.dataset.clientSecret,
+            {
+                payment_method: {
+                    card: cardElement,
+                }
+            }
+        );
+        
+        if (error) {
+            // Show error to customer
+            ResaleX.showNotification(error.message, 'error');
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        } else {
+            // Payment succeeded
+            ResaleX.showNotification('Платеж успешно обработан!', 'success');
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 2000);
+        }
+    } catch (err) {
+        ResaleX.showNotification('Произошла ошибка при обработке платежа', 'error');
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+    }
+});
+
+// Form validation
+const requiredFields = form.querySelectorAll('[required]');
+requiredFields.forEach(field => {
+    field.addEventListener('blur', function() {
+        if (!this.value.trim()) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+});
+</script>
+{% endblock %}

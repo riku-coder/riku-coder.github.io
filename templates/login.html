@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Вход - ResaleX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0" style="background: var(--glass-bg); backdrop-filter: var(--glass-backdrop); border: 1px solid var(--glass-border);">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="login-icon mb-3" style="font-size: 4rem; color: var(--accent-primary); animation: pulse 2s infinite;">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <h3 class="fw-bold text-primary">Добро пожаловать</h3>
+                        <p class="text-muted">Войдите в свой аккаунт ResaleX</p>
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.username.label(class="form-label fw-semibold") }}
+                            {{ form.username(class="form-control form-control-lg") }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.username.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            {{ form.password.label(class="form-label fw-semibold") }}
+                            {{ form.password(class="form-control form-control-lg") }}
+                            {% if form.password.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.password.errors %}
+                                        <div>{{ error }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-muted small">
+                            Нет аккаунта? 
+                            <a href="#" class="text-primary text-decoration-none fw-semibold">
+                                Свяжитесь с администратором
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Root Account Info -->
+            <div class="card mt-4 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="fas fa-crown me-2"></i>Root Account
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-2">
+                        <strong>Username:</strong> root<br>
+                        <strong>Password:</strong> admin123
+                    </p>
+                    <p class="small text-muted mb-0">
+                        Пожалуйста, измените пароль после первого входа
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
